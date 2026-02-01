@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UI Components Demo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="bg-gray-100">
+  <div id="root"></div>
+  
+  <script type="text/babel">
+    const { useState } = React;
+    
+    // Button Component
+    const Button = ({ variant = 'primary', size = 'medium', className = '', children, ...props }) => {
+      const baseStyles = 'font-semibold rounded transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2';
+      
+      const variantStyles = {
+        primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
+        secondary: 'bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500',
+        outline: 'bg-transparent border-2 border-blue-600 text-blue-600 hover:bg-blue-50 focus:ring-blue-500'
+      };
+      
+      const sizeStyles = {
+        small: 'px-3 py-1.5 text-sm',
+        medium: 'px-4 py-2 text-base',
+        large: 'px-6 py-3 text-lg'
+      };
+      
+      const classes = `${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`;
+      
+      return <button className={classes} {...props}>{children}</button>;
+    };
+    
+    // Input Component
+    const Input = ({ label, error, helperText, className = '', ...props }) => {
+      const inputClasses = `w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors ${
+        error
+          ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
+          : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
+      } ${className}`;
+      
+      return (
+        <div className="w-full">
+          {label && (
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {label}
+            </label>
+          )}
+          <input className={inputClasses} {...props} />
+          {error && (
+            <p className="mt-1 text-sm text-red-600">{error}</p>
+          )}
+          {!error && helperText && (
+            <p className="mt-1 text-sm text-gray-500">{helperText}</p>
+          )}
+        </div>
+      );
+    };
+    
+    // Card Component
+    const Card = ({ title, children, footer, className = '' }) => {
+      return (
+        <div className={`bg-white rounded-lg shadow-md overflow-hidden ${className}`}>
+          {title && (
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+            </div>
+          )}
+          <div className="px-6 py-4">
+            {children}
+          </div>
+          {footer && (
+            <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
+              {footer}
+            </div>
+          )}
+        </div>
+      );
+    };
+    
+    // Demo App
+    const App = () => {
+      const [email, setEmail] = useState('');
+      const [error, setError] = useState('');
+      
+      const handleSubmit = () => {
+        if (!email.includes('@')) {
+          setError('Please enter a valid email address');
+        } else {
+          setError('');
+          alert(`Form submitted with email: ${email}`);
+        }
+      };
+      
+      return (
+        <div className="container mx-auto px-4 py-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-8">UI Component Library Demo</h1>
+          
+          <div className="space-y-8">
+            {/* Button Examples */}
+            <Card title="Button Component">
+              <div className="space-y-4">
+                <div>
+                  <h4 className="text-sm font-medium text-gray-700 mb-2">Variants</h4>
+                  <div className="flex gap-3 flex-wrap">
+                    <Button variant="primary">Primary</Button>
+                    <Button variant="secondary">Secondary</Button>
+                    <Button variant="outline">Outline</Button>
+                  </div>
+                </div>
+                
+                <div>
+                  <h4 className="text-sm font-medium text-gray-700 mb-2">Sizes</h4>
+                  <div className="flex gap-3 items-center flex-wrap">
+                    <Button size="small">Small</Button>
+                    <Button size="medium">Medium</Button>
+                    <Button size="large">Large</Button>
+                  </div>
+                </div>
+              </div>
+            </Card>
+            
+            {/* Input Examples */}
+            <Card title="Input Component">
+              <div className="space-y-4 max-w-md">
+                <Input 
+                  label="Email Address"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  error={error}
+                />
+                
+                <Input 
+                  label="Username"
+                  type="text"
+                  placeholder="Choose a username"
+                  helperText="This will be your public display name"
+                />
+                
+                <Button onClick={handleSubmit}>Submit</Button>
+              </div>
+            </Card>
+            
+            {/* Card Examples */}
+            <Card title="Card Component">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Card title="Simple Card">
+                  <p className="text-gray-600">This is a simple card with just a title and content.</p>
+                </Card>
+                
+                <Card 
+                  title="Card with Footer"
+                  footer={
+                    <div className="flex justify-end">
+                      <Button size="small">Action</Button>
+                    </div>
+                  }
+                >
+                  <p className="text-gray-600">This card includes a footer section for actions.</p>
+                </Card>
+              </div>
+            </Card>
+          </div>
+        </div>
+      );
+    };
+    
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+</body>
+</html>
